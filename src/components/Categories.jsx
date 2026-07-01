@@ -79,42 +79,41 @@ export default function Categories() {
 
 function TypewriterText({ text, className }) {
   const words = text.split(" ")
-  let charIndex = 0
+
+  const container = {
+    hidden: { opacity: 0 },
+    visible: {
+      opacity: 1,
+      transition: { staggerChildren: 0.04, delayChildren: 0.2 }
+    },
+  }
+
+  const child = {
+    hidden: { opacity: 0 },
+    visible: { opacity: 1, transition: { duration: 0.1 } }
+  }
 
   return (
-    <h2 className={className}>
-      {words.map((word, wordIdx) => {
-        const wordContent = (
-          <span key={wordIdx} className="inline-block whitespace-nowrap">
-            {Array.from(word).map((char, i) => {
-              const currentDelay = 0.2 + (charIndex * 0.035)
-              charIndex++
-              return (
-                <motion.span
-                  key={i}
-                  initial={{ opacity: 0 }}
-                  whileInView={{ opacity: 1 }}
-                  viewport={{ once: true, margin: "-100px" }}
-                  transition={{ duration: 0.1, delay: currentDelay }}
-                >
-                  {char}
-                </motion.span>
-              )
-            })}
+    <motion.h2
+      className={className}
+      variants={container}
+      initial="hidden"
+      whileInView="visible"
+      viewport={{ once: true, margin: "0px" }}
+    >
+      {words.map((word, wordIdx) => (
+        <Fragment key={wordIdx}>
+          <span className="inline-block whitespace-nowrap">
+            {Array.from(word).map((char, i) => (
+              <motion.span key={i} variants={child}>
+                {char}
+              </motion.span>
+            ))}
           </span>
-        )
-        
-        // Add 1 to index to account for the space we type between words
-        charIndex++
-
-        return (
-          <Fragment key={wordIdx}>
-            {wordContent}
-            {wordIdx < words.length - 1 && " "}
-          </Fragment>
-        )
-      })}
-    </h2>
+          {wordIdx < words.length - 1 && " "}
+        </Fragment>
+      ))}
+    </motion.h2>
   )
 }
 
